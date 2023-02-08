@@ -1,5 +1,5 @@
-import * as d3Array from "./third-party/d3-array-3.1.1.js";
-import * as uuid from "./third-party/uuid-8.3.2.js";
+import { group } from "./third-party/d3-array-3.1.1.js";
+import { v4 as uuid } from "./third-party/uuid-8.3.2.js";
 
 import { DataFrame } from "./dataframe.js";
 import { _isSubsetArray } from "./utils.js";
@@ -114,7 +114,7 @@ function _runWindowOverMapWithWindowSize(partitions, partitionByCols, windowFunc
      */
 
     // Generate temp unique id for col
-    let windowArrayColName = uuid.v4();
+    let windowArrayColName = uuid();
     let cleanRow, dummy;
 
     return Array.from(partitions, ([key, value]) => {
@@ -220,7 +220,7 @@ export function applyWindowFunction(df, newCol, windowFunc, partitionByCols, ord
 
     // Get Map with results per partition
     let partitionFunctions = _generatePartitionFunctions(partitionByCols);
-    let partitionMap = d3Array.group(df.rows, ...partitionFunctions);
+    let partitionMap = group(df.rows, ...partitionFunctions);
 
     // Apply window function to ordered partitions
     if (partitionByCols.length) {
