@@ -20,7 +20,11 @@ import {
     _isValidColumnName,
     _getArrayOfObjectReferences,
     _getDistinctFn,
-    _isString
+    _isString,
+    _getDistinctColumnValues,
+    _getNullObjectFromProperties,
+    _assignPivotValues,
+    _getPivotColsAggregationMap
 } from "./utils.js";
 
 
@@ -398,6 +402,25 @@ export class DataFrame {
             throw Error(`Invalid columns found in groupBy(): ${_.difference(cols, this.columns)}`);
 
         return groupAggregation(this, cols, agg);
+    }
+
+    pivot(groupByCols, pivotCol, valueCol, aggType) {
+        /**
+         * Returns a new DataFrame that has been
+         * transposed by aggregating the value columns
+         * across the pivoted values in `pivotCol`, and
+         * grouping these by columns defined by `groupByCols`.
+         */
+
+        let props = _getDistinctColumnValues(this, pivotCol);
+        let nullObj = _getNullObjectFromProperties(props);
+        let rows = [nullObj];
+        let nullDf = new DataFrame(rows, props);
+        let groupDf = this.groupBy([...groupByCols, pivotCol], {[valueCol]: aggType});
+        let df = groupDf.crossJoin(nullDf);
+        _assignPivotValues(df, pivotCol, `${valueCol}_${aggType}`, props);
+        let groupByMap = df.groupBy(groupByCols, _getPivotColsAggregationMap(props, aggType));
+        return groupByMap;
     }
 
     unionByName(df) {
