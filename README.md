@@ -4,7 +4,7 @@
 
 A browser version of Lorix, the _simple_, _user-friendly_ Javascript DataFrame API for transforming data.
 
-_Based on Lorix v0.2.7_
+_Based on Lorix v0.3.0_
 
 For the original non-browser version, based on Node, see [here](https://github.com/jmsmistral/lorix)
 
